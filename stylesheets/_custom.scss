@@ -11,6 +11,9 @@ body{
 
 .bg-gradient{
   background-image: linear-gradient(175deg, $warning 55%, white 45%) !important;
+  @include media-breakpoint-down(lg) {
+    background: $warning !important;
+  }
 }
 .todolist{
   max-width: 500px;
@@ -36,16 +39,17 @@ body{
     border: 0;
   }
 }
-// .tab{
-//   width: 100%;
-// }
+
 
 .list-body{
   input{
-    transform: scale(2);
+    transform: scale(1.5);
     &:checked~span{
       text-decoration: line-through;
     }
+  }
+  span{
+    font-size: 14px;
   }
   
 }
