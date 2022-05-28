@@ -36,18 +36,18 @@
             </h2>
             <form action="">
               <div class="mb-4">
-                <label for="user-email" class="form-label fw-bold">Email</label>
-                <input type="email" class="form-control border-0 rounded-3 py-3" id="user-email" placeholder="請輸入Email">
-                <p class="text-danger">此欄位不可為空</p>
+                <label for="email" class="form-label fw-bold">Email</label>
+                <input type="email" class="form-control border-0 rounded-3 py-3" id="email" placeholder="請輸入Email">
+                <p class="warning-text opacity-0 text-danger">此欄位不可為空</p>
               </div>
               <div class="mb-4">
-                <label for="user-password" class="form-label fw-bold">密碼</label>
-                <input type="password" class="form-control border-0 rounded-3 py-3" id="user-password" placeholder="請輸入密碼">
-                <p class="text-danger">此欄位不可為空</p>
+                <label for="password" class="form-label fw-bold">密碼</label>
+                <input type="password" class="form-control border-0 rounded-3 py-3" id="password" placeholder="請輸入密碼">
+                <p class="warning-text opacity-0 text-danger">此欄位不可為空</p>
               </div>
               <div class="mb-4 d-flex flex-column align-items-center">
-                <button type="submit" class="btn btn-dark mb-3 px-5 py-3 rounded-3">登入</button>
-                <a href="#" class="text-decoration-none text-dark fw-bold">註冊帳號</a>
+                <button type="submit" class="btn btn-dark mb-3 px-5 py-3 rounded-3" id="login-btn">登入</button>
+                <a href="signup.html" class="text-decoration-none text-dark fw-bold">註冊帳號</a>
               </div>
             </form>
           </div>
@@ -56,6 +56,8 @@
 
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="./js/login.js"></script>
 </body>
 
 </html>
