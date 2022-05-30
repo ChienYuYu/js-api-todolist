@@ -1,7 +1,10 @@
 
+const loginSignUp =document.querySelector('#login-signup')
 const loginPage = document.querySelector('#login-page');
 const signUpPage = document.querySelector('#signup-page');
 const mainPage = document.querySelector('#main-page');
+const todoList = document.querySelector('.todolist');
+const empty = document.querySelector('.empty');
 let token = "";
 //登入頁DOM---------------------------
 const loginEmail = document.querySelector('#login-email');
@@ -34,7 +37,7 @@ loginBtn.addEventListener('click', (e) => {
     })
   }
 })
-
+//前往註冊頁連結
 goSignUpBtn.addEventListener('click', (e) => {
   e.preventDefault();
   signUpPage.classList.remove('d-none')
@@ -52,7 +55,7 @@ function login(e, p) {
       console.log(response)
       alert(response.data.message)
       token = response.headers.authorization
-      loginPage.classList.add('d-none')
+      loginSignUp.classList.add('d-none')
       mainPage.classList.remove('d-none')
       showUserName.textContent = response.data.nickname
       getTodo()
@@ -76,7 +79,7 @@ signUpBtn.addEventListener('click', (e) => {
     signUp(eValue, nValue, pValue)
   }
 })
-
+//前往登入頁連結
 goLoginBtn.addEventListener('click', (e) => {
   e.preventDefault();
   loginPage.classList.remove('d-none')
@@ -103,8 +106,6 @@ function signUp(e, n, p) {
     });
 }
 //主頁面---------------------------
-// let token = "";
-
 function getTodo() {
   axios.get('https://todoo.5xcamp.us/todos', {
     "headers": {
@@ -113,9 +114,17 @@ function getTodo() {
   })
     .then(function (response) {
       console.log(response);
+      if(response.data.todos=[]){
+        empty.classList.remove('d-none')
+        todoList.classList.add('d-none')
+      }else{
+        todoList.classList.remove('d-none')
+        empty.classList.add('d-none')
+      }
     })
     .catch(function (error) {
       console.log(error.response);
     })
 }
+//登出按鈕(待補)
 //---------------------------------

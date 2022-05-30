@@ -11969,12 +11969,12 @@ body {
   }
 }
 
-.todolist {
+.mytodo {
   max-width: 500px;
   margin: 0 auto;
 }
 
-.todolist .add-bar {
+.mytodo .add-bar {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -11986,7 +11986,7 @@ body {
   border-radius: .5rem;
 }
 
-.todolist .add-btn {
+.mytodo .add-btn {
   width: 40px;
   height: 40px;
   font-size: 2rem;
@@ -12001,7 +12001,7 @@ body {
           align-items: center;
 }
 
-.todolist .input-todo {
+.mytodo .input-todo {
   width: 100%;
   padding: 10px;
   border: 0;
