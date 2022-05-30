@@ -3,6 +3,7 @@ const password =document.querySelector('#password');
 const loginBtn = document.querySelector('#login-btn');
 const warningText = document.querySelectorAll('.warning-text');
 
+
 loginBtn.addEventListener('click',(e)=>{
   e.preventDefault();
   let eValue = email.value
@@ -26,7 +27,11 @@ function login(e,p){
   .then(function (response) {
     console.log(response)
     alert(response.data.message)
+    window.location.href ="./main.html";
+    // window.location.assign("./main.html");//轉頁面
   })
+
+  
   .catch(function (error) {
     console.log(error.response)
     alert(error.response.data.message)
