@@ -2,13 +2,26 @@
 const loginPage = document.querySelector('#login-page');
 const signUpPage = document.querySelector('#signup-page');
 const mainPage = document.querySelector('#main-page');
-//登入---------------------------
+let token = "";
+//登入頁DOM---------------------------
 const loginEmail = document.querySelector('#login-email');
 const loginPassword = document.querySelector('#login-password');
 const loginBtn = document.querySelector('#login-btn');
 const goSignUpBtn = document.querySelector('#go-signup-btn');
 const warningText = document.querySelectorAll('.warning-text');
+//註冊頁DOM---------------------------
+const signUpEmail = document.querySelector('#signup-email');
+const signUpNickname = document.querySelector('#signup-nickname');
+const signUpPassword = document.querySelector('#signup-password');
+const signUpPassword2 = document.querySelector('#signup-password2');
+const signUpBtn = document.querySelector('#signup-btn');
+const goLoginBtn = document.querySelector('#go-login-btn');
+//主頁DOM-----------------------------
+const showUserName = document.querySelector('#show-user-name');
+const logoutBtn = document.querySelector('#logout-btn');
+//------------------------------------
 
+//登入頁---------------------------
 loginBtn.addEventListener('click', (e) => {
   e.preventDefault();
   let eValue = loginEmail.value
@@ -38,9 +51,11 @@ function login(e, p) {
     .then(function (response) {
       console.log(response)
       alert(response.data.message)
-      //d-none d-block div
-      mainPage.classList.remove('d-none')
+      token = response.headers.authorization
       loginPage.classList.add('d-none')
+      mainPage.classList.remove('d-none')
+      showUserName.textContent = response.data.nickname
+      getTodo()
     })
 
     .catch(function (error) {
@@ -48,13 +63,7 @@ function login(e, p) {
       alert(error.response.data.message)
     });
 }
-//註冊---------------------------
-const signUpEmail = document.querySelector('#signup-email');
-const signUpNickname = document.querySelector('#signup-nickname');
-const signUpPassword = document.querySelector('#signup-password');
-const signUpPassword2 = document.querySelector('#signup-password2');
-const signUpBtn = document.querySelector('#signup-btn');
-
+//註冊頁---------------------------
 signUpBtn.addEventListener('click', (e) => {
   e.preventDefault();
   let eValue = signUpEmail.value
@@ -68,6 +77,12 @@ signUpBtn.addEventListener('click', (e) => {
   }
 })
 
+goLoginBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  loginPage.classList.remove('d-none')
+  signUpPage.classList.add('d-none')
+})
+
 function signUp(e, n, p) {
   axios.post('https://todoo.5xcamp.us/users', {
     "user": {
@@ -79,6 +94,8 @@ function signUp(e, n, p) {
     .then((response) => {
       console.log(response);
       alert(response.data.message);
+      loginPage.classList.remove('d-none')
+      signUpPage.classList.add('d-none')
     })
     .catch((error) => {
       console.log(error.response);
@@ -86,8 +103,7 @@ function signUp(e, n, p) {
     });
 }
 //主頁面---------------------------
-const showUserName = document.querySelector('#show-user-name');
-let token = "";
+// let token = "";
 
 function getTodo() {
   axios.get('https://todoo.5xcamp.us/todos', {
@@ -96,11 +112,9 @@ function getTodo() {
     }
   })
     .then(function (response) {
-      // handle success
       console.log(response);
     })
     .catch(function (error) {
-      // handle error
       console.log(error.response);
     })
 }
