@@ -53,3 +53,15 @@ body{
   }
   
 }
+.list{
+  input{
+    transform: scale(1.5);
+    &:checked~span{
+      text-decoration: line-through;
+    }
+  }
+  span{
+    font-size: 14px;
+  }
+  
+}

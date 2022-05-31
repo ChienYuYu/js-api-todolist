@@ -12019,4 +12019,17 @@ body {
 .list-body span {
   font-size: 14px;
 }
+
+.list input {
+  -webkit-transform: scale(1.5);
+          transform: scale(1.5);
+}
+
+.list input:checked ~ span {
+  text-decoration: line-through;
+}
+
+.list span {
+  font-size: 14px;
+}
 /*# sourceMappingURL=all.css.map */

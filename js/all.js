@@ -6,6 +6,7 @@ const mainPage = document.querySelector('#main-page');
 const todoList = document.querySelector('.todolist');
 const empty = document.querySelector('.empty');
 let token = "";
+let todoData = [];//抓出陣列資料放這裡
 //登入頁DOM---------------------------
 const loginEmail = document.querySelector('#login-email');
 const loginPassword = document.querySelector('#login-password');
@@ -24,9 +25,10 @@ const showUserName = document.querySelector('#show-user-name');
 const logoutBtn = document.querySelector('#logout-btn');
 const inputTodo = document.querySelector('.input-todo');
 const addTodoBtn = document.querySelector('.add-todo-btn');
+const list = document.querySelector('.list');
 //------------------------------------
 
-//登入頁---------------------------
+//登入----
 loginBtn.addEventListener('click', (e) => {
   e.preventDefault();
   let eValue = loginEmail.value
@@ -68,7 +70,7 @@ function login(e, p) {
       alert(error.response.data.message)
     });
 }
-//註冊頁---------------------------
+//註冊---
 signUpBtn.addEventListener('click', (e) => {
   e.preventDefault();
   let eValue = signUpEmail.value
@@ -108,7 +110,7 @@ function signUp(e, n, p) {
     });
 }
 
-//主頁面---------------------------
+//取得資料-getTodo()---
 function getTodo() {
   axios.get('https://todoo.5xcamp.us/todos', {
     "headers": {
@@ -117,6 +119,7 @@ function getTodo() {
   })
     .then(function (response) {
       console.log(response);
+      // 有待辦無待辦顯示不同畫面---
       if(response.data.todos.length === 0){
         empty.classList.remove('d-none')
         todoList.classList.add('d-none')
@@ -124,11 +127,16 @@ function getTodo() {
         todoList.classList.remove('d-none')
         empty.classList.add('d-none')
       }
+      // 把陣列資料抓出放todoData[]裡---
+      todoData = response.data.todos
+      renderData()//渲染資料
     })
     .catch(function (error) {
       console.log(error.response);
     })
 }
+//渲染資料-------------------------
+
 //登出-------------
 logoutBtn.addEventListener('click',(e)=>{
   e.preventDefault();
@@ -149,12 +157,13 @@ function logout(){
   })
   .catch((error)=>console.log(error.response))
 }
-//新增---------------------
+//新增-----
 addTodoBtn.addEventListener('click',()=>{
-  let todoItem = inputTodo.value;
+  let todoItem = inputTodo.value
   addTodo(todoItem)
+  inputTodo.value = ''
 })
-
+//鍵盤Enter新增------(待做)
 function addTodo(item){
   axios.post('https://todoo.5xcamp.us/todos',{
     "todo": {
@@ -167,13 +176,9 @@ function addTodo(item){
   })
   .then((response)=>{
     console.log(response);
-    // getTodo()
+    getTodo()
   })
   .catch((error)=>console.log(error.response))
 }
 
-// Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjg0Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNjUzOTY2NDU5LCJleHAiOjE2NTUyNjI0NTksImp0aSI6IjVkMWI1Y2YwLTAxOTgtNDE5OS05NDlhLTJiMDJlMDA4NGZiYSJ9.Sa1ACu_00C6Wa-_kLsvx22S-wLNvfEC4T-Pv_jIfNa0
-
-// Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjg0Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNjUzOTY2NjY5LCJleHAiOjE2NTUyNjI2NjksImp0aSI6ImE3Y2JhNmI4LTVkN2UtNGM4MS05ZmQyLWM2Njc1ZmRiNzYyMyJ9.Rjzj-eBHWE2xjMoBuEdY4uCcYX5k4I1NCZoGhlm4S-M
-
-// Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjg0Iiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNjUzOTY2NzYxLCJleHAiOjE2NTUyNjI3NjEsImp0aSI6IjY0OGYxMzM4LTg2YzYtNDZiMy05NWRjLTJmNDFkMTA4NjUwYSJ9.IgWdzmzOxBIZ06Sx1LIfIfUjWwMWA3vBQ9wgJytwOfg
+//刪除------
