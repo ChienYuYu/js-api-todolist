@@ -27,6 +27,7 @@ const logoutBtn = document.querySelector('#logout-btn');
 const inputTodo = document.querySelector('.input-todo');
 const addTodoBtn = document.querySelector('.add-todo-btn');
 const list = document.querySelector('.list');
+const deleteBtn = document.querySelectorAll('.delete-btn');
 //------------------------------------
 
 //登入頁----
@@ -138,15 +139,15 @@ function getTodo() {
 function renderData(){
   let str=""
   todoData.forEach(function(item,index){
-    str +=`<li>
+  str +=`<li>
     <label class="d-flex align-items-center border-bottom">
       <input type="checkbox" class="m-3">
       <span>${item.content}</span>
-      <a href="#" class="text-decoration-none text-dark p-3 ms-auto">
-        <i class="bi bi-x-lg"></i>
-      </a>
+      <a href="#" class="bi bi-pencil text-decoration-none text-dark p-3 ms-auto" data-id="${item.id}"></a>
+      <a href="#" class="bi bi-x-lg text-decoration-none text-dark p-3" data-id="${item.id}" data-element="delete-btn"></a>
     </label>
   </li>`
+  
   })
   list.innerHTML = str
 }
@@ -188,3 +189,19 @@ function addTodo(item){
 }
 
 //刪除------
+list.addEventListener('click',function(e){
+  let id = e.target.getAttribute('data-id')
+  if(e.target.getAttribute('data-element') == 'delete-btn'){
+    e.preventDefault()
+    deleteTodo(id)
+  }
+})
+
+function deleteTodo(id){
+  axios.delete(`${apiUrl}/todos/${id}`)
+  .then((res)=>{
+    console.log(res)
+    getTodo()
+  })
+  .catch(error=>console.log(error.response))
+}
