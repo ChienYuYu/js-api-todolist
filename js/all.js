@@ -5,8 +5,9 @@ const signUpPage = document.querySelector('#signup-page');
 const mainPage = document.querySelector('#main-page');
 const todoList = document.querySelector('.todolist');
 const empty = document.querySelector('.empty');
-let token = "";
+// let token = "";
 let todoData = [];//抓出陣列資料放這裡
+const apiUrl ="https://todoo.5xcamp.us";
 //登入頁DOM---------------------------
 const loginEmail = document.querySelector('#login-email');
 const loginPassword = document.querySelector('#login-password');
@@ -28,7 +29,7 @@ const addTodoBtn = document.querySelector('.add-todo-btn');
 const list = document.querySelector('.list');
 //------------------------------------
 
-//登入----
+//登入頁----
 loginBtn.addEventListener('click', (e) => {
   e.preventDefault();
   let eValue = loginEmail.value
@@ -47,9 +48,9 @@ goSignUpBtn.addEventListener('click', (e) => {
   signUpPage.classList.remove('d-none')
   loginPage.classList.add('d-none')
 })
-
+// login()
 function login(e, p) {
-  axios.post('https://todoo.5xcamp.us/users/sign_in', {
+  axios.post(`${apiUrl}/users/sign_in`, {
     "user": {
       "email": e,
       "password": p
@@ -58,7 +59,9 @@ function login(e, p) {
     .then(function (response) {
       console.log(response)
       alert(response.data.message)
-      token = response.headers.authorization
+      //預設所有axios帶上token↓//用這個後登出後無法再登入要重整才行(待確認)
+      axios.defaults.headers.common['Authorization'] = response.headers.authorization
+      // token = response.headers.authorization
       loginSignUp.classList.add('d-none')
       mainPage.classList.remove('d-none')
       showUserName.textContent = response.data.nickname
@@ -70,7 +73,7 @@ function login(e, p) {
       alert(error.response.data.message)
     });
 }
-//註冊---
+//註冊頁---
 signUpBtn.addEventListener('click', (e) => {
   e.preventDefault();
   let eValue = signUpEmail.value
@@ -89,9 +92,9 @@ goLoginBtn.addEventListener('click', (e) => {
   loginPage.classList.remove('d-none')
   signUpPage.classList.add('d-none')
 })
-
+//signUp()
 function signUp(e, n, p) {
-  axios.post('https://todoo.5xcamp.us/users', {
+  axios.post(`${apiUrl}/users`, {
     "user": {
       "email": e,
       "nickname": n,
@@ -112,11 +115,7 @@ function signUp(e, n, p) {
 
 //取得資料-getTodo()---
 function getTodo() {
-  axios.get('https://todoo.5xcamp.us/todos', {
-    "headers": {
-      "authorization": token
-    }
-  })
+  axios.get(`${apiUrl}/todos`)
     .then(function (response) {
       console.log(response);
       // 有待辦無待辦顯示不同畫面---
@@ -135,20 +134,31 @@ function getTodo() {
       console.log(error.response);
     })
 }
-//渲染資料-------------------------
+//渲染資料 renderData()---
+function renderData(){
+  let str=""
+  todoData.forEach(function(item,index){
+    str +=`<li>
+    <label class="d-flex align-items-center border-bottom">
+      <input type="checkbox" class="m-3">
+      <span>${item.content}</span>
+      <a href="#" class="text-decoration-none text-dark p-3 ms-auto">
+        <i class="bi bi-x-lg"></i>
+      </a>
+    </label>
+  </li>`
+  })
+  list.innerHTML = str
+}
 
 //登出-------------
 logoutBtn.addEventListener('click',(e)=>{
   e.preventDefault();
   logout();
 })
-//詢問問題:為什麼第二個參數不能寫token? 要用物件?
+//logout()
 function logout(){
-  axios.delete('https://todoo.5xcamp.us/users/sign_out',{
-    "headers": {
-      "authorization": token
-    }
-  })
+  axios.delete(`${apiUrl}/users/sign_out`)
   .then((response)=>{
     console.log(response)
     alert(response.data.message)
@@ -165,13 +175,9 @@ addTodoBtn.addEventListener('click',()=>{
 })
 //鍵盤Enter新增------(待做)
 function addTodo(item){
-  axios.post('https://todoo.5xcamp.us/todos',{
+  axios.post(`${apiUrl}/todos`,{
     "todo": {
       "content": item
-    }
-  },{
-    "headers": {
-      "authorization": token
     }
   })
   .then((response)=>{
