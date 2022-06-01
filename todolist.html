@@ -95,7 +95,7 @@
     </div>
   </div>
   <!-- main page------------------------ -->
-  <div class="wrapper vh-100 bg-gradient d-none" id="main-page">
+  <div class="wrapper vh-100 bg-gradient d-none position-relative" id="main-page">
     <header class="d-flex justify-content-between p-3">
       <h2 class="eng-title">
         <i class="bi bi-check2-square"></i>
@@ -147,6 +147,19 @@
           <div class="d-flex justify-content-between p-3">
             <p>5個待完成項目</p>
             <a href="#" class="text-decoration-none link-secondary">清除已完成項目</a>
+          </div>
+        </div>
+
+        <!-- -edit mask-------------------------- -->
+        <div
+          class="edit-area d-none bg-dark bg-opacity-50 position-absolute top-0 start-0 bottom-0 end-0 d-flex justify-content-center align-items-center">
+          <div class="bg-dark bg-opacity-75 p-3 p-md-5 rounded-3 mx-2">
+            <label for="" class="form-label text-white">更新待辦</label>
+            <input type="text" placeholder="請輸入內容" class="new-todo form-control p-2 rounded-3 border-0 mb-3">
+            <div class="d-flex justify-content-end btn-area">
+              <button class="btn btn-danger text-white ms-2" data-element="confirm-btn">確認</button>
+              <button class="btn btn-secondary ms-2" data-element="cancel-btn">取消</button>
+            </div>
           </div>
         </div>
 
