@@ -8,7 +8,7 @@ const empty = document.querySelector('.empty');
 // let token = "";
 let todoData = [];//抓出陣列資料放這裡
 const apiUrl = "https://todoo.5xcamp.us";
-let tabStatus="";//all finished unfinished
+let tabStatus="all";//all finished unfinished
 //登入頁DOM---------------------------
 const loginEmail = document.querySelector('#login-email');
 const loginPassword = document.querySelector('#login-password');
@@ -28,11 +28,10 @@ const logoutBtn = document.querySelector('#logout-btn');
 const inputTodo = document.querySelector('.input-todo');
 const addTodoBtn = document.querySelector('.add-todo-btn');
 const list = document.querySelector('.list');
-// const deleteBtn = document.querySelectorAll('.delete-btn');
-// const editBtn = document.querySelectorAll('edit-btn');
 const editArea = document.querySelector('.edit-area');
 const newTodo = document.querySelector('.new-todo');
 const tab = document.querySelector('.tab');
+const showUnfinished = document.querySelector('.show-unfinished');
 //------------------------------------
 
 //登入頁----
@@ -143,8 +142,10 @@ function getTodo() {
 //渲染資料 renderData()---
 function renderData() {
   let str = ""
+  let count = 0
   todoData.forEach(function (item, index) {
-    if(item.completed_at == null){
+    if(item.completed_at === null){count+=1}
+    if((item.completed_at === null) && (tabStatus == 'all'||tabStatus =='unfinished')){
       str += `<li>
       <label class="d-flex align-items-center border-bottom">
         <input type="checkbox" class="m-3"data-element="check-todo"data-id="${item.id}">
@@ -153,7 +154,7 @@ function renderData() {
         <a href="#" class="bi bi-x-lg text-decoration-none text-dark p-3" data-id="${item.id}" data-element="delete-btn"></a>
       </label>
     </li>`
-    }else{
+    }else if((item.completed_at !== null) && (tabStatus == 'all'||tabStatus =='finished')){
       str += `<li>
       <label class="d-flex align-items-center border-bottom">
         <input type="checkbox" class="m-3"data-element="check-todo"data-id="${item.id}" checked>
@@ -165,6 +166,7 @@ function renderData() {
     }
 
   })
+  showUnfinished.innerHTML = `${count}個待完成項目`
   list.innerHTML = str
 }
 
@@ -234,7 +236,6 @@ list.addEventListener('click', function (e) {
   //打勾
   if(e.target.getAttribute('data-element') == 'check-todo'){
     statusToggle(id)
-    // console.log(id);
   }
 })
 
@@ -273,12 +274,9 @@ tab.addEventListener('click', (e) => {
     e.target.classList.add('text-dark')
   } else { return }
   tabStatus = e.target.getAttribute('data-status');
-
-  //if data-status==??? 渲染????
+  getTodo();
 })
-
-//check toggle
-//完成已完成
+//statusToggle()
 function statusToggle(id){
   axios.patch(`${apiUrl}/todos/${id}/toggle`)
   .then(res=>{
@@ -288,7 +286,3 @@ function statusToggle(id){
   .catch(error => console.log(error.response))
 }
 
-
-
-//打勾之後執行axios.patch
-//然後渲染資料 根據completed_at是否為空值決定渲染
