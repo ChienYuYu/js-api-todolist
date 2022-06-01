@@ -32,6 +32,7 @@ const editArea = document.querySelector('.edit-area');
 const newTodo = document.querySelector('.new-todo');
 const tab = document.querySelector('.tab');
 const showUnfinished = document.querySelector('.show-unfinished');
+const deleteAllBtn = document.querySelector('.delete-all-btn');
 //------------------------------------
 
 //登入頁----
@@ -187,12 +188,20 @@ function logout() {
     .catch((error) => console.log(error.response))
 }
 //新增-----
-addTodoBtn.addEventListener('click', () => {
+addTodoBtn.addEventListener('click', (e) => {
+  e.preventDefault()
   let todoItem = inputTodo.value
   addTodo(todoItem)
   inputTodo.value = ''
 })
-//鍵盤Enter新增------(待做)
+//鍵盤Enter新增------
+inputTodo.addEventListener('keypress',(e)=>{
+  let todoItem = inputTodo.value
+  if(e.key === 'Enter'){
+    addTodo(todoItem)
+  }
+  inputTodo.value = ''
+})
 function addTodo(item) {
   axios.post(`${apiUrl}/todos`, {
     "todo": {
@@ -286,3 +295,12 @@ function statusToggle(id){
   .catch(error => console.log(error.response))
 }
 
+//刪除全部
+deleteAllBtn.addEventListener('click',(e)=>{
+  e.preventDefault();
+  todoData.forEach(item=>{
+    if(item.completed_at !== null){
+      deleteTodo(item.id)
+    }
+  })
+})
