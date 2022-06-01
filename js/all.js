@@ -30,7 +30,8 @@ const list = document.querySelector('.list');
 // const deleteBtn = document.querySelectorAll('.delete-btn');
 // const editBtn = document.querySelectorAll('edit-btn');
 const editArea = document.querySelector('.edit-area');
-const newTodo = document.querySelector('.new-todo')
+const newTodo = document.querySelector('.new-todo');
+const tab = document.querySelector('.tab');
 //------------------------------------
 
 //登入頁----
@@ -243,4 +244,17 @@ function editTodo(id, ntValue) {
     .catch(error => console.log(error.response))
 }
 
-//------------
+//tab切換------------
+tab.addEventListener('click',(e)=>{
+  if(e.target.nodeName == 'A'){
+    let tabItem = document.querySelectorAll('.tab a')
+  tabItem.forEach((item)=>{
+    item.classList.remove('border-bottom')
+    item.classList.remove('text-dark')
+  })
+  e.target.classList.add('border-bottom')
+  e.target.classList.add('text-dark')
+  }else{return}
+  
+  console.log(e.target.nodeName);
+})
