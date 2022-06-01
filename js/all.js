@@ -8,6 +8,7 @@ const empty = document.querySelector('.empty');
 // let token = "";
 let todoData = [];//抓出陣列資料放這裡
 const apiUrl = "https://todoo.5xcamp.us";
+let tabStatus="";//all finished unfinished
 //登入頁DOM---------------------------
 const loginEmail = document.querySelector('#login-email');
 const loginPassword = document.querySelector('#login-password');
@@ -143,14 +144,25 @@ function getTodo() {
 function renderData() {
   let str = ""
   todoData.forEach(function (item, index) {
-    str += `<li>
-    <label class="d-flex align-items-center border-bottom">
-      <input type="checkbox" class="m-3">
-      <span>${item.content}</span>
-      <a href="#" class="bi bi-pencil text-decoration-none text-dark p-3 ms-auto" data-id="${item.id}" data-element="edit-btn"></a>
-      <a href="#" class="bi bi-x-lg text-decoration-none text-dark p-3" data-id="${item.id}" data-element="delete-btn"></a>
-    </label>
-  </li>`
+    if(item.completed_at == null){
+      str += `<li>
+      <label class="d-flex align-items-center border-bottom">
+        <input type="checkbox" class="m-3"data-element="check-todo"data-id="${item.id}">
+        <span>${item.content}</span>
+        <a href="#" class="bi bi-pencil text-decoration-none text-dark p-3 ms-auto" data-id="${item.id}" data-element="edit-btn"></a>
+        <a href="#" class="bi bi-x-lg text-decoration-none text-dark p-3" data-id="${item.id}" data-element="delete-btn"></a>
+      </label>
+    </li>`
+    }else{
+      str += `<li>
+      <label class="d-flex align-items-center border-bottom">
+        <input type="checkbox" class="m-3"data-element="check-todo"data-id="${item.id}" checked>
+        <span>${item.content}</span>
+        <a href="#" class="bi bi-pencil text-decoration-none text-dark p-3 ms-auto" data-id="${item.id}" data-element="edit-btn"></a>
+        <a href="#" class="bi bi-x-lg text-decoration-none text-dark p-3" data-id="${item.id}" data-element="delete-btn"></a>
+      </label>
+    </li>`
+    }
 
   })
   list.innerHTML = str
@@ -192,7 +204,7 @@ function addTodo(item) {
     .catch((error) => console.log(error.response))
 }
 
-//刪除---編輯---
+//刪除---編輯---打勾---
 list.addEventListener('click', function (e) {
   let id = e.target.getAttribute('data-id')
   //叉叉
@@ -212,12 +224,17 @@ list.addEventListener('click', function (e) {
         editTodo(id, ntValue)
         newTodo.value = ""//清除欄位文字
         editArea.classList.add('d-none')
-      }  else if (e.target.getAttribute('data-element') === 'cancel-btn') {
+      } else if (e.target.getAttribute('data-element') === 'cancel-btn') {
         e.preventDefault()
         newTodo.value = ""//清除欄位文字
         editArea.classList.add('d-none')
       } else { return }
     })
+  }
+  //打勾
+  if(e.target.getAttribute('data-element') == 'check-todo'){
+    statusToggle(id)
+    // console.log(id);
   }
 })
 
@@ -245,16 +262,33 @@ function editTodo(id, ntValue) {
 }
 
 //tab切換------------
-tab.addEventListener('click',(e)=>{
-  if(e.target.nodeName == 'A'){
+tab.addEventListener('click', (e) => {
+  if (e.target.nodeName === 'A') {
     let tabItem = document.querySelectorAll('.tab a')
-  tabItem.forEach((item)=>{
-    item.classList.remove('border-bottom')
-    item.classList.remove('text-dark')
-  })
-  e.target.classList.add('border-bottom')
-  e.target.classList.add('text-dark')
-  }else{return}
-  
-  console.log(e.target.nodeName);
+    tabItem.forEach((item) => {
+      item.classList.remove('border-bottom')
+      item.classList.remove('text-dark')
+    })
+    e.target.classList.add('border-bottom')
+    e.target.classList.add('text-dark')
+  } else { return }
+  tabStatus = e.target.getAttribute('data-status');
+
+  //if data-status==??? 渲染????
 })
+
+//check toggle
+//完成已完成
+function statusToggle(id){
+  axios.patch(`${apiUrl}/todos/${id}/toggle`)
+  .then(res=>{
+    console.log(res)
+    getTodo()
+  })
+  .catch(error => console.log(error.response))
+}
+
+
+
+//打勾之後執行axios.patch
+//然後渲染資料 根據completed_at是否為空值決定渲染
