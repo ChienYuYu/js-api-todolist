@@ -1,4 +1,3 @@
-
 const loginSignUp = document.querySelector('#login-signup')
 const loginPage = document.querySelector('#login-page');
 const signUpPage = document.querySelector('#signup-page');
@@ -35,8 +34,7 @@ const showUnfinished = document.querySelector('.show-unfinished');
 const deleteAllBtn = document.querySelector('.delete-all-btn');
 //------------------------------------
 
-//登入頁
-//登入btn click事件
+//登入頁----- //登入btn click事件
 loginBtn.addEventListener('click', (e) => {
   e.preventDefault();
   let eValue = loginEmail.value
@@ -56,8 +54,7 @@ goSignUpBtn.addEventListener('click', (e) => {
   loginPage.classList.add('d-none')
 })
 
-//註冊頁
-//註冊btn click事件
+//註冊頁----//註冊btn click事件
 signUpBtn.addEventListener('click', (e) => {
   e.preventDefault();
   let eValue = signUpEmail.value
