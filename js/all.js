@@ -188,6 +188,7 @@ editArea.addEventListener('click', (e) => {
 //tab切換 click事件
 tab.addEventListener('click', (e) => {
   if (e.target.nodeName === 'A') {
+    e.preventDefault()
     let tabItem = document.querySelectorAll('.tab a')
     tabItem.forEach((item) => {
       item.classList.remove('border-bottom')
@@ -202,7 +203,7 @@ tab.addEventListener('click', (e) => {
 
 //刪除全部 btn click事件
 deleteAllBtn.addEventListener('click',(e)=>{
-  e.preventDefault();
+  e.preventDefault()
   todoData.forEach(item=>{
     if(item.completed_at !== null){
       deleteTodo(item.id)
