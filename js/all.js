@@ -6,9 +6,9 @@ const mainPage = document.querySelector('#main-page');
 const todoList = document.querySelector('.todolist');
 const empty = document.querySelector('.empty');
 // let token = "";
-let todoData = [];//抓出陣列資料放這裡
+let todoData = []; //抓出陣列資料放這裡
 const apiUrl = "https://todoo.5xcamp.us";
-let tabStatus="all";//all finished unfinished
+let tabStatus="all"; //all finished unfinished
 //登入頁DOM---------------------------
 const loginEmail = document.querySelector('#login-email');
 const loginPassword = document.querySelector('#login-password');
@@ -35,7 +35,8 @@ const showUnfinished = document.querySelector('.show-unfinished');
 const deleteAllBtn = document.querySelector('.delete-all-btn');
 //------------------------------------
 
-//登入頁----
+//登入頁
+//登入btn click事件
 loginBtn.addEventListener('click', (e) => {
   e.preventDefault();
   let eValue = loginEmail.value
@@ -48,38 +49,15 @@ loginBtn.addEventListener('click', (e) => {
     })
   }
 })
-//前往註冊頁連結
+//註冊頁連結 click事件
 goSignUpBtn.addEventListener('click', (e) => {
   e.preventDefault();
   signUpPage.classList.remove('d-none')
   loginPage.classList.add('d-none')
 })
-// login()
-function login(e, p) {
-  axios.post(`${apiUrl}/users/sign_in`, {
-    "user": {
-      "email": e,
-      "password": p
-    }
-  })
-    .then(function (response) {
-      console.log(response)
-      alert(response.data.message)
-      //預設所有axios帶上token↓//用這個後登出後無法再登入要重整才行(待確認)
-      axios.defaults.headers.common['Authorization'] = response.headers.authorization
-      // token = response.headers.authorization
-      loginSignUp.classList.add('d-none')
-      mainPage.classList.remove('d-none')
-      showUserName.textContent = response.data.nickname
-      getTodo()
-    })
 
-    .catch(function (error) {
-      console.log(error.response)
-      alert(error.response.data.message)
-    });
-}
-//註冊頁---
+//註冊頁
+//註冊btn click事件
 signUpBtn.addEventListener('click', (e) => {
   e.preventDefault();
   let eValue = signUpEmail.value
@@ -92,54 +70,13 @@ signUpBtn.addEventListener('click', (e) => {
     signUp(eValue, nValue, pValue)
   }
 })
-//前往登入頁連結
+//登入頁連結 click事件
 goLoginBtn.addEventListener('click', (e) => {
   e.preventDefault();
   loginPage.classList.remove('d-none')
   signUpPage.classList.add('d-none')
 })
-//signUp()
-function signUp(e, n, p) {
-  axios.post(`${apiUrl}/users`, {
-    "user": {
-      "email": e,
-      "nickname": n,
-      "password": p
-    }
-  })
-    .then((response) => {
-      console.log(response);
-      alert(response.data.message);
-      loginPage.classList.remove('d-none')
-      signUpPage.classList.add('d-none')
-    })
-    .catch((error) => {
-      console.log(error.response);
-      alert(error.response.data.error);
-    });
-}
 
-//取得資料-getTodo()---
-function getTodo() {
-  axios.get(`${apiUrl}/todos`)
-    .then(function (response) {
-      console.log(response);
-      // 有待辦無待辦顯示不同畫面---
-      if (response.data.todos.length === 0) {
-        empty.classList.remove('d-none')
-        todoList.classList.add('d-none')
-      } else {
-        todoList.classList.remove('d-none')
-        empty.classList.add('d-none')
-      }
-      // 把陣列資料抓出放todoData[]裡---
-      todoData = response.data.todos
-      renderData()//渲染資料
-    })
-    .catch(function (error) {
-      console.log(error.response);
-    })
-}
 //渲染資料 renderData()---
 function renderData() {
   let str = ""
@@ -171,107 +108,66 @@ function renderData() {
   list.innerHTML = str
 }
 
-//登出-------------
+//登出 btn click事件----
 logoutBtn.addEventListener('click', (e) => {
   e.preventDefault();
   logout();
 })
-//logout()
-function logout() {
-  axios.delete(`${apiUrl}/users/sign_out`)
-    .then((response) => {
-      console.log(response)
-      alert(response.data.message)
-      mainPage.classList.add('d-none')
-      loginSignUp.classList.remove('d-none')
-    })
-    .catch((error) => console.log(error.response))
-}
-//新增-----
+
+//新增待辦 btn click事件-----
 addTodoBtn.addEventListener('click', (e) => {
   e.preventDefault()
   let todoItem = inputTodo.value
   addTodo(todoItem)
   inputTodo.value = ''
 })
-//鍵盤Enter新增------
+//鍵盤新增 Enter keypress事件------
 inputTodo.addEventListener('keypress',(e)=>{
   let todoItem = inputTodo.value
   if(e.key === 'Enter'){
     addTodo(todoItem)
+    inputTodo.value = ''
   }
-  inputTodo.value = ''
+  
 })
-function addTodo(item) {
-  axios.post(`${apiUrl}/todos`, {
-    "todo": {
-      "content": item
-    }
-  })
-    .then((response) => {
-      console.log(response);
-      getTodo()
-    })
-    .catch((error) => console.log(error.response))
-}
 
-//刪除---編輯---打勾---
+//刪除&編輯&打勾---父層綁監聽抓子層---
 list.addEventListener('click', function (e) {
   let id = e.target.getAttribute('data-id')
-  //叉叉
+  //叉叉 icon (刪除)
   if (e.target.getAttribute('data-element') == 'delete-btn') {
     e.preventDefault()
     deleteTodo(id)
   }
-  //鉛筆
+  //鉛筆 icon (編輯)
   if (e.target.getAttribute('data-element') == 'edit-btn') {
     e.preventDefault()
     editArea.classList.remove('d-none')//顯示編輯視窗
-    editArea.addEventListener('click', (e) => {
-      let ntValue = newTodo.value
-      if ((e.target.getAttribute('data-element') === 'confirm-btn') &&
-        (ntValue.trim() !== "")) {
-        e.preventDefault()
-        editTodo(id, ntValue)
-        newTodo.value = ""//清除欄位文字
-        editArea.classList.add('d-none')
-      } else if (e.target.getAttribute('data-element') === 'cancel-btn') {
-        e.preventDefault()
-        newTodo.value = ""//清除欄位文字
-        editArea.classList.add('d-none')
-      } else { return }
-    })
+    editArea.setAttribute('data-id',id)
   }
-  //打勾
+  //打勾 切換狀態
   if(e.target.getAttribute('data-element') == 'check-todo'){
     statusToggle(id)
   }
 })
 
-//deleteTodo()
-function deleteTodo(id) {
-  axios.delete(`${apiUrl}/todos/${id}`)
-    .then((res) => {
-      console.log(res)
-      getTodo()
-    })
-    .catch(error => console.log(error.response))
-}
-//editTodo()
-function editTodo(id, ntValue) {
-  axios.put(`${apiUrl}/todos/${id}`, {
-    "todo": {
-      "content": ntValue
-    }
-  })
-    .then(res => {
-      console.log(res)
-      getTodo()
-    })
-    .catch(error => console.log(error.response))
-}
+//編輯視窗 click事件----------
+editArea.addEventListener('click', (e) => {
+  let ntValue = newTodo.value
+  let id = editArea.getAttribute('data-id')
+  if ((e.target.getAttribute('data-element') === 'confirm-btn') &&
+  (ntValue.trim() !== "")) {
+    e.preventDefault()
+    editTodo(id, ntValue)
+    editArea.classList.add('d-none')
+  } else if (e.target.getAttribute('data-element') === 'cancel-btn') {
+    e.preventDefault()
+    editArea.classList.add('d-none')
+  } else { return }
+  newTodo.value = ""//清除欄位文字
+})
 
-//tab切換------------
+//tab切換 click事件
 tab.addEventListener('click', (e) => {
   if (e.target.nodeName === 'A') {
     let tabItem = document.querySelectorAll('.tab a')
@@ -285,17 +181,8 @@ tab.addEventListener('click', (e) => {
   tabStatus = e.target.getAttribute('data-status');
   getTodo();
 })
-//statusToggle()
-function statusToggle(id){
-  axios.patch(`${apiUrl}/todos/${id}/toggle`)
-  .then(res=>{
-    console.log(res)
-    getTodo()
-  })
-  .catch(error => console.log(error.response))
-}
 
-//刪除全部
+//刪除全部 btn click事件
 deleteAllBtn.addEventListener('click',(e)=>{
   e.preventDefault();
   todoData.forEach(item=>{
@@ -304,3 +191,126 @@ deleteAllBtn.addEventListener('click',(e)=>{
     }
   })
 })
+
+//------------API---------------//
+//註冊API signUp()----------
+function signUp(e, n, p) {
+  axios.post(`${apiUrl}/users`, {
+    "user": {
+      "email": e,
+      "nickname": n,
+      "password": p
+    }
+  })
+    .then((response) => {
+      console.log(response);
+      alert(response.data.message);
+      loginPage.classList.remove('d-none')
+      signUpPage.classList.add('d-none')
+    })
+    .catch((error) => {
+      console.log(error.response);
+      alert(error.response.data.error);
+    });
+}
+//登入API login()----------
+function login(e, p) {
+  axios.post(`${apiUrl}/users/sign_in`, {
+    "user": {
+      "email": e,
+      "password": p
+    }
+  })
+    .then(function (response) {
+      console.log(response)
+      alert(response.data.message)
+      //預設所有axios帶上token↓//用這個後登出後無法再登入要重整才行(待確認)
+      axios.defaults.headers.common['Authorization'] = response.headers.authorization
+      // token = response.headers.authorization
+      loginSignUp.classList.add('d-none')
+      mainPage.classList.remove('d-none')
+      showUserName.textContent = response.data.nickname
+      getTodo()
+    })
+
+    .catch(function (error) {
+      console.log(error.response)
+      alert(error.response.data.message)
+    });
+}
+//登出API logout()----------
+function logout() {
+  axios.delete(`${apiUrl}/users/sign_out`)
+    .then((response) => {
+      console.log(response)
+      alert(response.data.message)
+      mainPage.classList.add('d-none')
+      loginSignUp.classList.remove('d-none')
+    })
+    .catch((error) => console.log(error.response))
+}
+//取得資料API getTodo()-------------
+function getTodo() {
+  axios.get(`${apiUrl}/todos`)
+    .then(function (response) {
+      console.log(response);
+      // 有待辦無待辦顯示不同畫面---
+      if (response.data.todos.length === 0) {
+        empty.classList.remove('d-none')
+        todoList.classList.add('d-none')
+      } else {
+        todoList.classList.remove('d-none')
+        empty.classList.add('d-none')
+      }
+      // 把陣列資料抓出放todoData[]裡---
+      todoData = response.data.todos
+      renderData()//渲染資料
+    })
+    .catch(function (error) {
+      console.log(error.response);
+    })
+}
+//新增API addTodo()----------
+function addTodo(item) {
+  axios.post(`${apiUrl}/todos`, {
+    "todo": {
+      "content": item
+    }
+  })
+    .then((response) => {
+      console.log(response);
+      getTodo()
+    })
+    .catch((error) => console.log(error.response))
+}
+//編輯API editTodo()----------
+function editTodo(id, ntValue) {
+  axios.put(`${apiUrl}/todos/${id}`, {
+    "todo": {
+      "content": ntValue
+    }
+  })
+  .then(res => {
+    console.log(res)
+    getTodo()
+  })
+  .catch(error => console.log(error.response))
+}
+//刪除API deleteTodo()----------
+function deleteTodo(id) {
+  axios.delete(`${apiUrl}/todos/${id}`)
+    .then((res) => {
+      console.log(res)
+      getTodo()
+    })
+    .catch(error => console.log(error.response))
+}
+//已完成/待完成切換API statusToggle()----------
+function statusToggle(id){
+  axios.patch(`${apiUrl}/todos/${id}/toggle`)
+  .then(res=>{
+    console.log(res)
+    getTodo()
+  })
+  .catch(error => console.log(error.response))
+}
