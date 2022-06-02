@@ -1,9 +1,9 @@
-const loginSignUp = document.querySelector('#login-signup')
-const loginPage = document.querySelector('#login-page');
-const signUpPage = document.querySelector('#signup-page');
-const mainPage = document.querySelector('#main-page');
-const todoList = document.querySelector('.todolist');
-const empty = document.querySelector('.empty');
+const loginSignUp = document.querySelector('#login-signup')//放登入跟註冊畫面的div
+const loginPage = document.querySelector('#login-page');//登入畫面
+const signUpPage = document.querySelector('#signup-page');//註冊畫面
+const mainPage = document.querySelector('#main-page');//主頁面div含下面兩個子層
+const todoList = document.querySelector('.todolist');//有待辦事項顯示這個
+const empty = document.querySelector('.empty');//沒待辦事項顯示這個
 // let token = "";
 let todoData = []; //抓出陣列資料放這裡
 const apiUrl = "https://todoo.5xcamp.us";
@@ -13,7 +13,8 @@ const loginEmail = document.querySelector('#login-email');
 const loginPassword = document.querySelector('#login-password');
 const loginBtn = document.querySelector('#login-btn');
 const goSignUpBtn = document.querySelector('#go-signup-btn');
-const warningText = document.querySelectorAll('.warning-text');
+const warningText1 = document.querySelector('.warning-text1');
+const warningText2 = document.querySelector('.warning-text2');
 //註冊頁DOM---------------------------
 const signUpEmail = document.querySelector('#signup-email');
 const signUpNickname = document.querySelector('#signup-nickname');
@@ -32,7 +33,6 @@ const newTodo = document.querySelector('.new-todo');
 const tab = document.querySelector('.tab');
 const showUnfinished = document.querySelector('.show-unfinished');
 const deleteAllBtn = document.querySelector('.delete-all-btn');
-//------------------------------------
 
 //登入頁----- //登入btn click事件
 loginBtn.addEventListener('click', (e) => {
@@ -41,12 +41,36 @@ loginBtn.addEventListener('click', (e) => {
   let pValue = loginPassword.value
   if ((eValue.trim() !== '') && (pValue.trim() !== '')) {
     login(eValue, pValue)
-  } else {
-    warningText.forEach(function (item) {
-      item.classList.remove('opacity-0')
-    })
+    //執行登入API後清空登入頁 警告文字&密碼欄位---
+    warningText1.classList.add('opacity-0')
+    warningText2.classList.add('opacity-0')
+    loginPassword.value=''
+  } else if((eValue.trim() == '') && (pValue.trim() !== '')) {
+    warningText1.classList.remove('opacity-0')
+  }else if((eValue.trim() !== '') && (pValue.trim() === '')) {
+    warningText2.classList.remove('opacity-0')
+  }else{
+    warningText1.classList.remove('opacity-0')
+    warningText2.classList.remove('opacity-0')
   }
 })
+//email欄位 keypress事件--警告文字---------------
+loginEmail.addEventListener('keypress',(e)=>{
+  if(loginEmail.value !== ''){
+    warningText1.classList.add('opacity-0')
+  }else{
+    warningText1.classList.remove('opacity-0')
+  }
+})
+//password欄位 keypress事件--警告文字-------------
+loginPassword.addEventListener('keypress',(e)=>{
+  if(loginPassword.value !== ''){
+    warningText2.classList.add('opacity-0')
+  }else{
+    warningText2.classList.remove('opacity-0')
+  }
+})
+//---------------------
 //註冊頁連結 click事件
 goSignUpBtn.addEventListener('click', (e) => {
   e.preventDefault();
@@ -110,7 +134,6 @@ logoutBtn.addEventListener('click', (e) => {
   e.preventDefault();
   logout();
 })
-
 //新增待辦 btn click事件-----
 addTodoBtn.addEventListener('click', (e) => {
   e.preventDefault()
@@ -125,9 +148,7 @@ inputTodo.addEventListener('keypress',(e)=>{
     addTodo(todoItem)
     inputTodo.value = ''
   }
-  
 })
-
 //刪除&編輯&打勾---父層綁監聽抓子層---
 list.addEventListener('click', function (e) {
   let id = e.target.getAttribute('data-id')
@@ -221,7 +242,7 @@ function login(e, p) {
     .then(function (response) {
       console.log(response)
       alert(response.data.message)
-      //預設所有axios帶上token↓//用這個後登出後無法再登入要重整才行(待確認)
+      //預設所有axios帶上token↓//用這個後登出後無法再登入要F5重整才行
       axios.defaults.headers.common['Authorization'] = response.headers.authorization
       // token = response.headers.authorization
       loginSignUp.classList.add('d-none')
@@ -229,10 +250,9 @@ function login(e, p) {
       showUserName.textContent = response.data.nickname
       getTodo()
     })
-
     .catch(function (error) {
       console.log(error.response)
-      alert(error.response.data.message)
+      alert(error.response.data.message + `\n請確認帳號密碼、格式是否輸入正確`)
     });
 }
 //登出API logout()----------
@@ -245,7 +265,7 @@ function logout() {
       loginSignUp.classList.remove('d-none')
       inputTodo.value = ''//清空新增欄位文字
     })
-    .catch((error) => console.log(error.response))
+    .catch(error => console.log(error.response))
 }
 //取得資料API getTodo()-------------
 function getTodo() {
@@ -264,9 +284,7 @@ function getTodo() {
       todoData = response.data.todos
       renderData()//渲染資料
     })
-    .catch(function (error) {
-      console.log(error.response);
-    })
+    .catch( error => console.log(error.response))
 }
 //新增API addTodo()----------
 function addTodo(item) {
@@ -279,7 +297,7 @@ function addTodo(item) {
       console.log(response);
       getTodo()
     })
-    .catch((error) => console.log(error.response))
+    .catch(error => console.log(error.response))
 }
 //編輯API editTodo()----------
 function editTodo(id, ntValue) {
