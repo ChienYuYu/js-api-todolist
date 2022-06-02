@@ -246,6 +246,7 @@ function logout() {
       alert(response.data.message)
       mainPage.classList.add('d-none')
       loginSignUp.classList.remove('d-none')
+      inputTodo.value = ''//清空新增欄位文字
     })
     .catch((error) => console.log(error.response))
 }
